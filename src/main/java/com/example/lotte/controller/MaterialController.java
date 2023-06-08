@@ -1,14 +1,19 @@
 package com.example.lotte.controller;
 
+import com.example.lotte.DTO.ItemsDTO;
 import com.example.lotte.DTO.MaterialDTO;
+import com.example.lotte.DTO.StockReceivingDTO;
 import com.example.lotte.builder.MaterialBuilder;
 import com.example.lotte.builder.MaterialConcreteBuilder;
 import com.example.lotte.model.Material;
+import com.example.lotte.response.ErrorResponse;
 import com.example.lotte.response.PaginationResponse;
 import com.example.lotte.service.MaterialService;
+import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,9 +27,6 @@ public class MaterialController {
 
     @Autowired
     MaterialService materialService;
-
-
-
 
     @GetMapping
     public List<Material> getAllMaterials() {
@@ -57,4 +59,18 @@ public class MaterialController {
         materialService.deleteMaterial(id);
     }
 
+    @PostMapping("/import/{supplierId}")
+    public ResponseEntity<String> importMaterials(@RequestBody List<ItemsDTO> itemsDTOS, @PathVariable("supplierId")Long supplierId) {
+        try {            System.out.println("ádasdas");
+
+            materialService.importMaterials(itemsDTOS, supplierId);
+            return ResponseEntity.ok("Nguyên liệu đã được nhập thành công.");
+        } catch (NotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy nguyên liệu hoặc nhà cung cấp.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Lỗi không xác định.");
+        }
+    }
+
 }
+

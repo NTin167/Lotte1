@@ -21,8 +21,7 @@ public class Employee {
 
     private String phoneNumber;
 
-    @OneToOne
-    @JoinColumn(name = "account_id")
+    @OneToOne(mappedBy = "employee")
     private User account;
 
     // Getters and setters
@@ -75,11 +74,4 @@ public class Employee {
         this.phoneNumber = phoneNumber;
     }
 
-    public User getAccount() {
-        return account;
-    }
-
-    public void setAccount(User account) {
-        this.account = account;
-    }
 }

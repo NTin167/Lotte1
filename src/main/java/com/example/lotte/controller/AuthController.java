@@ -21,12 +21,11 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
-        System.out.println("ĐÃ GỌI API");
+    public ResponseEntity<?> login(@RequestBody LoginRequest loginRequest) {
         try {
             System.out.println(loginRequest.getUsername());
             User user = userService.login(loginRequest.getUsername(), loginRequest.getPassword());
-            return ResponseEntity.ok(user.getRole());
+            return ResponseEntity.ok(user);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(e.getMessage());
         }

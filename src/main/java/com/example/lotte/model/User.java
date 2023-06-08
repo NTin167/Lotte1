@@ -20,7 +20,8 @@ public class User {
     private String status;
 
 
-    @OneToOne(mappedBy = "account")
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "employee_id", referencedColumnName = "id")
     private Employee employee;
 
     @OneToOne(mappedBy = "account")

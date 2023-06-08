@@ -1,12 +1,15 @@
 package com.example.lotte.service;
 
+import com.example.lotte.DTO.ItemsDTO;
 import com.example.lotte.DTO.MaterialDTO;
 import com.example.lotte.model.Material;
 import com.example.lotte.repository.MaterialRepository;
+import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -50,5 +53,25 @@ public class MaterialService {
                 .orElseThrow(() -> new IllegalArgumentException("Invalid material ID: " + id));
 
         materialRepository.delete(material);
+    }
+
+    public void importMaterials(List<ItemsDTO> itemsDTOS, Long supplierId) throws NotFoundException {
+        for (ItemsDTO itemsDTO : itemsDTOS) {
+            Long itemId = itemsDTO.getItemId();
+            Integer quantity = itemsDTO.getQuantity();
+
+            Material material = materialRepository.findById(itemId).orElse(null);
+            if (material == null) {
+                throw new NotFoundException("Không tìm thấy nguyên liệu với ID: " + itemId);
+            }
+
+            // Thực hiện việc cập nhật số lượng nguyên liệu theo số lượng nhập vào
+            material.setStock(material.getStock() + quantity);
+            // Cập nhật thông tin nhà cung cấp cho nguyên liệu
+//            material.setSupplierId(supplierId);
+
+            // Lưu thay đổi vào cơ sở dữ liệu
+            materialRepository.save(material);
+        }
     }
 }
