@@ -19,7 +19,7 @@ public class UserService {
 
     public User login(String username, String password) {
         User user = userRepository.findByUsernameAndPassword(username, password);
-        System.out.println(user.getEmployee());
+//        System.out.println(user.getEmployee());
         if (user == null) {
             throw new RuntimeException("Invalid username or password");
         }

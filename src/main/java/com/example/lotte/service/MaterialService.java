@@ -3,6 +3,7 @@ package com.example.lotte.service;
 import com.example.lotte.DTO.ItemsDTO;
 import com.example.lotte.DTO.MaterialDTO;
 import com.example.lotte.DTO.StockReceivingDTO;
+import com.example.lotte.exception.ResourceNotFoundException;
 import com.example.lotte.model.*;
 import com.example.lotte.repository.*;
 import javassist.NotFoundException;
@@ -72,8 +73,14 @@ public class MaterialService {
 
     @Transactional
     public ResponseEntity<?> importMaterials(StockReceivingDTO stockReceivingDTO){
-        Employee employee = employeeRepository.findById(stockReceivingDTO.getStaffId()).get();
+        System.out.println(stockReceivingDTO.getStaffId());
+        System.out.println(stockReceivingDTO.getSupplierId());
+
+        Employee employee = employeeRepository.findById(
+                stockReceivingDTO.getStaffId()).orElseThrow(()->new ResourceNotFoundException("Employee", "id", stockReceivingDTO.getStaffId()));
         Supplier supplier = supplierRepository.findById(stockReceivingDTO.getSupplierId()).get();
+        System.out.println(employee.getName());
+        System.out.println(supplier.getName());
         Receipt receipt = new Receipt();
         if(employee == null || supplier == null) {
             return ResponseEntity.ok("Không tìm thấy nhân viên hay nhà cung cấp với ID: " + stockReceivingDTO.getStaffId());

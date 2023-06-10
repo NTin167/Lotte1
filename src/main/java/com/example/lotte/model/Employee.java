@@ -25,8 +25,8 @@ public class Employee {
 
     private String phoneNumber;
 
-    @OneToOne(mappedBy = "employee")
-    private User account;
+
+    private Long account;
 
     @OneToMany(mappedBy = "employee", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonIgnore
@@ -80,11 +80,11 @@ public class Employee {
         this.phoneNumber = phoneNumber;
     }
 
-    public User getAccount() {
+    public Long getAccount() {
         return account;
     }
 
-    public void setAccount(User account) {
+    public void setAccount(Long account) {
         this.account = account;
     }
 

@@ -1,28 +1,31 @@
-package com.example.lotte.model;
+package com.example.lotte.DTO;
 
-import javax.persistence.*;
+import javax.persistence.Column;
 
-@Entity
-@Table(name = "account")
-public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class UserDTO {
     private Long id;
 
-    @Column(nullable = false, unique = true)
     private String username;
 
-    @Column(nullable = false)
     private String password;
 
     private String role;
 
     private String status;
 
+    private Long employeeId;
 
+    public UserDTO() {
+    }
 
-    @OneToOne(mappedBy = "account")
-    private Customer customer;
+    public UserDTO(Long id, String username, String password, String role, String status, Long employeeId) {
+        this.id = id;
+        this.username = username;
+        this.password = password;
+        this.role = role;
+        this.status = status;
+        this.employeeId = employeeId;
+    }
 
     public Long getId() {
         return id;
@@ -63,5 +66,12 @@ public class User {
     public void setStatus(String status) {
         this.status = status;
     }
-    
+
+    public Long getEmployeeId() {
+        return employeeId;
+    }
+
+    public void setEmployeeId(Long employeeId) {
+        this.employeeId = employeeId;
+    }
 }
