@@ -13,6 +13,9 @@ public class ReceiptDetail {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    private int quantity;
+
+    private int status;
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "receiptId", nullable = false)
     @JsonIgnore
@@ -22,6 +25,14 @@ public class ReceiptDetail {
     @JoinColumn(name = "materialId", nullable = false)
     @JsonIgnore
     private Material material;
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
 
     public Long getId() {
         return id;
@@ -45,5 +56,13 @@ public class ReceiptDetail {
 
     public void setMaterial(Material material) {
         this.material = material;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
     }
 }

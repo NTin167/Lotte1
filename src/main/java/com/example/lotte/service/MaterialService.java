@@ -71,49 +71,6 @@ public class MaterialService {
         materialRepository.delete(material);
     }
 
-    @Transactional
-    public ResponseEntity<?> importMaterials(StockReceivingDTO stockReceivingDTO){
-        System.out.println(stockReceivingDTO.getStaffId());
-        System.out.println(stockReceivingDTO.getSupplierId());
-
-        Employee employee = employeeRepository.findById(
-                stockReceivingDTO.getStaffId()).orElseThrow(()->new ResourceNotFoundException("Employee", "id", stockReceivingDTO.getStaffId()));
-        Supplier supplier = supplierRepository.findById(stockReceivingDTO.getSupplierId()).get();
-        System.out.println(employee.getName());
-        System.out.println(supplier.getName());
-        Receipt receipt = new Receipt();
-        if(employee == null || supplier == null) {
-            return ResponseEntity.ok("Không tìm thấy nhân viên hay nhà cung cấp với ID: " + stockReceivingDTO.getStaffId());
-        }
-        else {
-            receipt.setDate(new Date());
-            receipt.setEmployee(employee);
-            receipt.setSupplier(supplier);
-            receiptRepository.save(receipt);
-        }
 
 
-
-        for (ItemsDTO itemsDTO : stockReceivingDTO.getItemsDTOS()) {
-            Long itemId = itemsDTO.getItemId();
-            Integer quantity = itemsDTO.getQuantity();
-
-            Material material = materialRepository.findById(itemId).orElse(null);
-            if (material == null) {
-                return ResponseEntity.ok(new NotFoundException("Không tìm thấy nguyên liệu với ID: " + itemId));
-            }
-            else {
-                material.setStock(material.getStock() + quantity);
-                materialRepository.save(material);
-
-                ReceiptDetail receiptDetail = new ReceiptDetail();
-                receiptDetail.setReceipt(receipt);
-                receiptDetail.setMaterial(material);
-                if(receipt.getEmployee() != null && receipt.getSupplier() != null) {
-                    receiptDetailRepository.save(receiptDetail);
-                }
-            }
-        }
-        return ResponseEntity.ok("Nhập nguyên liệu thành công");
-    }
 }

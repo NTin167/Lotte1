@@ -62,10 +62,7 @@ public class MaterialController {
         materialService.deleteMaterial(id);
     }
 
-    @PostMapping(value = "/import", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> importMaterials(@RequestBody StockReceivingDTO stockReceivingDTO) {
-            return materialService.importMaterials(stockReceivingDTO);
-    }
+
 
 }
 

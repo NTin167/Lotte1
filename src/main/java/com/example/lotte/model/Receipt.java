@@ -3,6 +3,8 @@ package com.example.lotte.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -15,7 +17,8 @@ public class Receipt {
     private Long id;
 
     @Column(name = "date")
-    private Date date;
+    private LocalDateTime date;
+
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "staffId", nullable = false)
@@ -39,11 +42,11 @@ public class Receipt {
         this.id = id;
     }
 
-    public Date getDate() {
+    public LocalDateTime getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(LocalDateTime date) {
         this.date = date;
     }
 
@@ -70,4 +73,5 @@ public class Receipt {
     public void setSupplier(Supplier supplier) {
         this.supplier = supplier;
     }
+
 }
