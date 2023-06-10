@@ -14,16 +14,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 @RestController
 @RequestMapping("/api/materials")
 public class MaterialController {
 
     private static int STOCK = 0;
+
 
     @Autowired
     MaterialService materialService;
@@ -59,12 +62,12 @@ public class MaterialController {
         materialService.deleteMaterial(id);
     }
 
-    @PostMapping("/import/{supplierId}")
-    public ResponseEntity<String> importMaterials(@RequestBody List<ItemsDTO> itemsDTOS, @PathVariable("supplierId")Long supplierId) {
-        try {            System.out.println("ádasdas");
-
-            materialService.importMaterials(itemsDTOS, supplierId);
-            return ResponseEntity.ok("Nguyên liệu đã được nhập thành công.");
+    @PostMapping(value = "/import/{supplierId}", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> importMaterials(@RequestBody StockReceivingDTO stockReceivingDTO, @PathVariable("supplierId")Long supplierId) {
+        try {
+            materialService.importMaterials(stockReceivingDTO);
+//            return ResponseEntity.ok("Nguyên liệu đã được nhập thành công.");
+            return ResponseEntity.ok(stockReceivingDTO);
         } catch (NotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy nguyên liệu hoặc nhà cung cấp.");
         } catch (Exception e) {

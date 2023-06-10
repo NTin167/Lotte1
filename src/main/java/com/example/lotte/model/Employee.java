@@ -1,8 +1,12 @@
 package com.example.lotte.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "employees")
@@ -24,7 +28,9 @@ public class Employee {
     @OneToOne(mappedBy = "employee")
     private User account;
 
-    // Getters and setters
+    @OneToMany(mappedBy = "employee", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Set<Receipt> receipts = new HashSet<>();
 
     public Long getId() {
         return id;
@@ -74,4 +80,19 @@ public class Employee {
         this.phoneNumber = phoneNumber;
     }
 
+    public User getAccount() {
+        return account;
+    }
+
+    public void setAccount(User account) {
+        this.account = account;
+    }
+
+    public Set<Receipt> getReceipts() {
+        return receipts;
+    }
+
+    public void setReceipts(Set<Receipt> receipts) {
+        this.receipts = receipts;
+    }
 }

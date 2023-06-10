@@ -2,8 +2,9 @@ package com.example.lotte.service;
 
 import com.example.lotte.DTO.ItemsDTO;
 import com.example.lotte.DTO.MaterialDTO;
-import com.example.lotte.model.Material;
-import com.example.lotte.repository.MaterialRepository;
+import com.example.lotte.DTO.StockReceivingDTO;
+import com.example.lotte.model.*;
+import com.example.lotte.repository.*;
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -11,7 +12,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,6 +22,18 @@ import java.util.stream.Collectors;
 public class MaterialService {
     @Autowired
     private MaterialRepository materialRepository;
+
+    @Autowired
+    private EmployeeRepository employeeRepository;
+
+    @Autowired
+    private SupplierRepository supplierRepository;
+
+    @Autowired
+    private ReceiptRepository receiptRepository;
+
+    @Autowired
+    private ReceiptDetailRepository receiptDetailRepository;
 
 
     public List<Material> getAllMaterials() {
@@ -55,8 +70,24 @@ public class MaterialService {
         materialRepository.delete(material);
     }
 
-    public void importMaterials(List<ItemsDTO> itemsDTOS, Long supplierId) throws NotFoundException {
-        for (ItemsDTO itemsDTO : itemsDTOS) {
+    @Transactional
+    public void importMaterials(StockReceivingDTO stockReceivingDTO) throws NotFoundException {
+        Employee employee = employeeRepository.findById(stockReceivingDTO.getStaffId()).get();
+        Supplier supplier = supplierRepository.findById(stockReceivingDTO.getSupplierId()).get();
+        Receipt receipt = new Receipt();
+        if(employee == null || supplier == null) {
+            throw new NotFoundException("Không tìm thấy nhân viên với ID: " + stockReceivingDTO.getStaffId());
+        }
+        else {
+            receipt.setDate(new Date());
+            receipt.setEmployee(employee);
+            receipt.setSupplier(supplier);
+            receiptRepository.save(receipt);
+        }
+
+
+
+        for (ItemsDTO itemsDTO : stockReceivingDTO.getItemsDTOS()) {
             Long itemId = itemsDTO.getItemId();
             Integer quantity = itemsDTO.getQuantity();
 
@@ -64,14 +95,18 @@ public class MaterialService {
             if (material == null) {
                 throw new NotFoundException("Không tìm thấy nguyên liệu với ID: " + itemId);
             }
+            else {
+                material.setStock(material.getStock() + quantity);
+                materialRepository.save(material);
 
-            // Thực hiện việc cập nhật số lượng nguyên liệu theo số lượng nhập vào
-            material.setStock(material.getStock() + quantity);
-            // Cập nhật thông tin nhà cung cấp cho nguyên liệu
-//            material.setSupplierId(supplierId);
-
-            // Lưu thay đổi vào cơ sở dữ liệu
-            materialRepository.save(material);
+                ReceiptDetail receiptDetail = new ReceiptDetail();
+                receiptDetail.setReceipt(receipt);
+                receiptDetail.setMaterial(material);
+                if(receipt.getEmployee() != null && receipt.getSupplier() != null) {
+                    receiptDetailRepository.save(receiptDetail);
+                }
+            }
         }
+
     }
 }

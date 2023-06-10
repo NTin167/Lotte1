@@ -6,12 +6,15 @@ public class StockReceivingDTO {
     private ArrayList<ItemsDTO> itemsDTOS;
     private Long supplierId;
 
-    public StockReceivingDTO(ArrayList<ItemsDTO> itemsDTOS, Long supplierId) {
-        this.itemsDTOS = itemsDTOS;
-        this.supplierId = supplierId;
-    }
+    private Long staffId;
 
     public StockReceivingDTO() {
+    }
+
+    public StockReceivingDTO(ArrayList<ItemsDTO> itemsDTOS, Long supplierId, Long staffId) {
+        this.itemsDTOS = itemsDTOS;
+        this.supplierId = supplierId;
+        this.staffId = staffId;
     }
 
     public ArrayList<ItemsDTO> getItemsDTOS() {
@@ -28,5 +31,13 @@ public class StockReceivingDTO {
 
     public void setSupplierId(Long supplierId) {
         this.supplierId = supplierId;
+    }
+
+    public Long getStaffId() {
+        return staffId;
+    }
+
+    public void setStaffId(Long staffId) {
+        this.staffId = staffId;
     }
 }

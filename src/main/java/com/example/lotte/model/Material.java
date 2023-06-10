@@ -1,9 +1,12 @@
 package com.example.lotte.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Builder;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "NguyenLieu")
@@ -19,6 +22,10 @@ public class Material {
     private String unit;
 
     private Integer stock;
+
+    @OneToMany(mappedBy = "material", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Set<ReceiptDetail> receiptDetails = new HashSet<>();
 
     public Material() {
     }
