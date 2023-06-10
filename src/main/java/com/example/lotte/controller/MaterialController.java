@@ -64,15 +64,7 @@ public class MaterialController {
 
     @PostMapping(value = "/import/{supplierId}", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> importMaterials(@RequestBody StockReceivingDTO stockReceivingDTO, @PathVariable("supplierId")Long supplierId) {
-        try {
-            materialService.importMaterials(stockReceivingDTO);
-//            return ResponseEntity.ok("Nguyên liệu đã được nhập thành công.");
-            return ResponseEntity.ok(stockReceivingDTO);
-        } catch (NotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy nguyên liệu hoặc nhà cung cấp.");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Lỗi không xác định.");
-        }
+            return materialService.importMaterials(stockReceivingDTO);
     }
 
 }

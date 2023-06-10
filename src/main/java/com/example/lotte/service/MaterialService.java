@@ -71,12 +71,12 @@ public class MaterialService {
     }
 
     @Transactional
-    public void importMaterials(StockReceivingDTO stockReceivingDTO) throws NotFoundException {
+    public ResponseEntity<?> importMaterials(StockReceivingDTO stockReceivingDTO){
         Employee employee = employeeRepository.findById(stockReceivingDTO.getStaffId()).get();
         Supplier supplier = supplierRepository.findById(stockReceivingDTO.getSupplierId()).get();
         Receipt receipt = new Receipt();
         if(employee == null || supplier == null) {
-            throw new NotFoundException("Không tìm thấy nhân viên với ID: " + stockReceivingDTO.getStaffId());
+            return ResponseEntity.ok("Không tìm thấy nhân viên hay nhà cung cấp với ID: " + stockReceivingDTO.getStaffId());
         }
         else {
             receipt.setDate(new Date());
@@ -93,7 +93,7 @@ public class MaterialService {
 
             Material material = materialRepository.findById(itemId).orElse(null);
             if (material == null) {
-                throw new NotFoundException("Không tìm thấy nguyên liệu với ID: " + itemId);
+                return ResponseEntity.ok(new NotFoundException("Không tìm thấy nguyên liệu với ID: " + itemId));
             }
             else {
                 material.setStock(material.getStock() + quantity);
@@ -107,6 +107,6 @@ public class MaterialService {
                 }
             }
         }
-
+        return ResponseEntity.ok("Nhập nguyên liệu thành công");
     }
 }
