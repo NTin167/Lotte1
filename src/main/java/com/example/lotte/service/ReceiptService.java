@@ -74,16 +74,16 @@ public class ReceiptService {
                 receiptDetail.setMaterial(material);
                 receiptDetail.setQuantity(quantity);
                 receiptDetail.setStatus(0);
-                receiptDetail.setTotalPrice(material.getPrice() * receiptDetail.getQuantity());
+                receiptDetail.setPrice(material.getPrice());
                 if(receipt.getEmployee() != null && receipt.getSupplier() != null) {
                     receiptDetailRepository.save(receiptDetail);
-                    totalPriceReceipt = totalPriceReceipt + receiptDetail.getTotalPrice();
+                    totalPriceReceipt = totalPriceReceipt + receiptDetail.getPrice() * receiptDetail.getQuantity();
                 }
             }
         }
         receipt.setTotalPrice(totalPriceReceipt);
         receiptRepository.save(receipt);
-        return ResponseEntity.ok("Tạo phiếu nhập thành công");
+        return ResponseEntity.ok(receipt);
     }
 
     public ResponseEntity<?> completeReceipt(Long receiptId) {
@@ -159,7 +159,7 @@ public class ReceiptService {
             receiptDetailDTO.setMaterial(receiptDetail.getMaterial().getName());
             receiptDetailDTO.setQuantity(receiptDetail.getQuantity());
             receiptDetailDTO.setStatus(receiptDetail.getStatus());
-            receiptDetailDTO.setTotalPrice(receiptDetail.getTotalPrice());
+            receiptDetailDTO.setPrice(receiptDetail.getPrice());
             receiptDetailDTOS.add(receiptDetailDTO);
         }
         return ResponseEntity.ok(receiptDetailDTOS);

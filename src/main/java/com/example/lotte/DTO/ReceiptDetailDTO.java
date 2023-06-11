@@ -16,7 +16,7 @@ public class ReceiptDetailDTO {
 
     private int status;
 
-    private Integer totalPrice;
+    private Integer price;
     public int getQuantity() {
         return quantity;
     }
@@ -57,11 +57,11 @@ public class ReceiptDetailDTO {
         this.material = material;
     }
 
-    public Integer getTotalPrice() {
-        return totalPrice;
+    public Integer getPrice() {
+        return price;
     }
 
-    public void setTotalPrice(Integer totalPrice) {
-        this.totalPrice = totalPrice;
+    public void setPrice(Integer price) {
+        this.price = price;
     }
 }
