@@ -11,6 +11,7 @@ import com.example.lotte.repository.FoodCategoryRepository;
 import com.example.lotte.repository.FoodRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -37,6 +38,7 @@ public class FoodService {
         newFood.setDescription(foodDTO.getDescription());
         newFood.setImage(foodDTO.getImage());
         newFood.setStatus(true);
+        newFood.setPrice(foodDTO.getPrice());
         System.out.println(foodDTO.getId());
 
         List<Material> materials = new ArrayList<>();
@@ -69,6 +71,7 @@ public class FoodService {
         existingFood.setName(updatedFood.getName());
         existingFood.setDescription(updatedFood.getDescription());
         existingFood.setCategory(foodCategory);
+        existingFood.setPrice(updatedFood.getPrice());
 
         List<Material> materials = new ArrayList<>();
         for(MaterialDTO materialDTO : updatedFood.getMaterialDTOS()) {
@@ -102,4 +105,51 @@ public class FoodService {
         existingFood.setStatus(updatedFood);
         return foodRepository.save(existingFood);
     }
+
+    public ResponseEntity<?> getAllFoodCategory() {
+        return ResponseEntity.ok(foodCategoryRepository.findAll());
+    }
+
+    public ResponseEntity<?> getDetailFood(Long id) {
+        Food food = foodRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Food not found with id: " , id.toString()));
+        FoodDTO foodDTO = new FoodDTO();
+        if(food == null) {
+            return ResponseEntity.notFound().build();
+        }
+        else {
+
+            foodDTO.setId(food.getId());
+            foodDTO.setName(food.getName());
+            foodDTO.setStatus(food.getStatus());
+            foodDTO.setPrice(food.getPrice());
+            foodDTO.setImage(food.getImage());
+            foodDTO.setDescription(food.getDescription());
+
+            ArrayList<MaterialDTO> materialDTO = new ArrayList<>();
+            for(Material material : food.getMaterials()) {
+                MaterialDTO materialDTO1 = new MaterialDTO();
+                materialDTO1.setId(material.getId());
+                materialDTO1.setName(material.getName());
+                materialDTO1.setPrice(material.getPrice());
+                materialDTO1.setUnit(material.getUnit());
+                materialDTO1.setStock(material.getStock());
+                materialDTO.add(materialDTO1);
+            }
+
+
+            foodDTO.setCategory(covertToDTO(food.getCategory()));
+            foodDTO.setMaterialDTOS(materialDTO);
+        }
+        return ResponseEntity.ok(foodDTO);
+    }
+
+    public FoodCategoryDTO covertToDTO(FoodCategory food) {
+        FoodCategoryDTO foodDTO = new FoodCategoryDTO();
+        foodDTO.setId(food.getId());
+        foodDTO.setName(food.getName());
+        return foodDTO;
+    }
+
+
 }

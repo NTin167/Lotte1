@@ -24,6 +24,8 @@ public class Food {
 
     private String description;
 
+    private Integer price;
+
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
@@ -31,6 +33,7 @@ public class Food {
     private FoodCategory category;
 
     @ManyToMany
+    @JsonIgnore
     @JoinTable(
             name = "food_material",
             joinColumns = @JoinColumn(name = "food_id"),
@@ -41,12 +44,13 @@ public class Food {
     public Food() {
     }
 
-    public Food(Long id, String name, String image, boolean status, String description, FoodCategory category, List<Material> materials) {
+    public Food(Long id, String name, String image, boolean status, String description, Integer price, FoodCategory category, List<Material> materials) {
         this.id = id;
         this.name = name;
         this.image = image;
         this.status = status;
         this.description = description;
+        this.price = price;
         this.category = category;
         this.materials = materials;
     }
@@ -105,5 +109,13 @@ public class Food {
 
     public void setMaterials(List<Material> materials) {
         this.materials = materials;
+    }
+
+    public Integer getPrice() {
+        return price;
+    }
+
+    public void setPrice(Integer price) {
+        this.price = price;
     }
 }

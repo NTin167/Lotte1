@@ -45,4 +45,14 @@ public class FoodController {
         Food food = foodService.updateStatusFood(id, status);
         return ResponseEntity.ok(food);
     }
+
+    @GetMapping(value = "/category")
+    public ResponseEntity<?> getAllCategory() {
+        return foodService.getAllFoodCategory();
+    }
+
+    @GetMapping(value = "/detailFood/{id}")
+    public ResponseEntity<?> getDetailFood(@PathVariable Long id) {
+        return foodService.getDetailFood(id);
+    }
 }

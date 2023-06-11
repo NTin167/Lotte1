@@ -2,28 +2,24 @@ package com.example.lotte.model;
 
 import javax.persistence.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Table(name = "order")
+@Table(name = "order_food")
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Float totalAmount;
+    private int status;
+
+    private LocalDateTime dateOrder;
 
     @ManyToOne
-    @JoinColumn(name = "customer_id")
-    private Customer customer;
-
-    @ManyToOne
-    @JoinColumn(name = "payment_method_id")
-    private PaymentMethod paymentMethod;
-
-    // Quan hệ One-to-Many với OrderDetail
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
-    private List<OrderDetail> orderDetails;
+    @JoinColumn(name = "staff_id")
+    private Employee employee;
 
     public Long getId() {
         return id;
@@ -33,35 +29,27 @@ public class Order {
         this.id = id;
     }
 
-    public Customer getCustomer() {
-        return customer;
+    public int getStatus() {
+        return status;
     }
 
-    public void setCustomer(Customer customer) {
-        this.customer = customer;
+    public void setStatus(int status) {
+        this.status = status;
     }
 
-    public PaymentMethod getPaymentMethod() {
-        return paymentMethod;
+    public LocalDateTime getDateOrder() {
+        return dateOrder;
     }
 
-    public void setPaymentMethod(PaymentMethod paymentMethod) {
-        this.paymentMethod = paymentMethod;
+    public void setDateOrder(LocalDateTime dateOrder) {
+        this.dateOrder = dateOrder;
     }
 
-    public List<OrderDetail> getOrderDetails() {
-        return orderDetails;
+    public Employee getEmployee() {
+        return employee;
     }
 
-    public void setOrderDetails(List<OrderDetail> orderDetails) {
-        this.orderDetails = orderDetails;
-    }
-
-    public Float getTotalAmount() {
-        return totalAmount;
-    }
-
-    public void setTotalAmount(Float totalAmount) {
-        this.totalAmount = totalAmount;
+    public void setEmployee(Employee employee) {
+        this.employee = employee;
     }
 }
