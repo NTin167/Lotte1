@@ -13,6 +13,8 @@ public class FoodDTO {
     private String name;
     private String description;
 
+    private String image;
+
     private boolean status;
     private FoodCategoryDTO category;
 
@@ -20,14 +22,16 @@ public class FoodDTO {
     // Các getter và setter
 
 
-    public FoodDTO(Long id, String name, String description, boolean status, FoodCategoryDTO category, ArrayList<MaterialDTO> materialDTOS) {
+    public FoodDTO(Long id, String name, String description, String image, boolean status, FoodCategoryDTO category, ArrayList<MaterialDTO> materialDTOS) {
         this.id = id;
         this.name = name;
         this.description = description;
+        this.image = image;
         this.status = status;
         this.category = category;
         this.materialDTOS = materialDTOS;
     }
+
 
     public Long getId() {
         return id;
@@ -75,5 +79,13 @@ public class FoodDTO {
 
     public void setMaterialDTOS(ArrayList<MaterialDTO> materialDTOS) {
         this.materialDTOS = materialDTOS;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 }

@@ -35,6 +35,7 @@ public class FoodService {
         Food newFood = new Food();
         newFood.setName(foodDTO.getName());
         newFood.setDescription(foodDTO.getDescription());
+        newFood.setImage(foodDTO.getImage());
         newFood.setStatus(true);
         System.out.println(foodDTO.getId());
 

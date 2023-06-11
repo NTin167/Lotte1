@@ -19,6 +19,8 @@ public class Customer {
 
     private String address;
 
+    private String phoneNumber;
+
     private int totalPoint;
 
     @OneToOne
@@ -79,5 +81,13 @@ public class Customer {
 
     public void setAccount(User account) {
         this.account = account;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 }

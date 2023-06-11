@@ -48,11 +48,11 @@ public class ReceiptService {
             receipt.setDate(LocalDateTime.now());
             receipt.setEmployee(employee);
             receipt.setSupplier(supplier);
+            receipt.setStatus(0); // chưa hoàn thành
             receiptRepository.save(receipt);
         }
 
-
-
+        Integer totalPriceReceipt = 0;
         for (ItemsDTO itemsDTO : stockReceivingDTO.getItemsDTOS()) {
             Long itemId = itemsDTO.getItemId();
             Integer quantity = itemsDTO.getQuantity();
@@ -62,8 +62,6 @@ public class ReceiptService {
                 return ResponseEntity.ok(new NotFoundException("Không tìm thấy nguyên liệu với ID: " + itemId));
             }
             else {
-
-
                 //-------------------------
 
 //                material.setStock(material.getStock() + quantity);
@@ -76,17 +74,22 @@ public class ReceiptService {
                 receiptDetail.setMaterial(material);
                 receiptDetail.setQuantity(quantity);
                 receiptDetail.setStatus(0);
+                receiptDetail.setTotalPrice(material.getPrice() * receiptDetail.getQuantity());
                 if(receipt.getEmployee() != null && receipt.getSupplier() != null) {
                     receiptDetailRepository.save(receiptDetail);
+                    totalPriceReceipt = totalPriceReceipt + receiptDetail.getTotalPrice();
                 }
             }
         }
+        receipt.setTotalPrice(totalPriceReceipt);
+        receiptRepository.save(receipt);
         return ResponseEntity.ok("Tạo phiếu nhập thành công");
     }
 
     public ResponseEntity<?> completeReceipt(Long receiptId) {
         Receipt receipt = receiptRepository.findById(receiptId)
                 .orElseThrow(()->new ResourceNotFoundException("receipt", "id", receiptId.toString()));
+        receipt.setStatus(1); // đã hoàn thành
         receiptRepository.save(receipt);
         List<ReceiptDetail> receiptDetailList = receiptDetailRepository.findAllByReceiptId(receiptId);
         for (ReceiptDetail itemsReceiptDetail : receiptDetailList) {
@@ -120,11 +123,11 @@ public class ReceiptService {
 
     }
 
-    public ResponseEntity<?> updateReceiptDetailStatus(Long id, int status) {
-        ReceiptDetail detail = receiptDetailRepository.findById(id)
-                .orElseThrow(()->new ResourceNotFoundException("receiptDetail", "id", id.toString()));
+    public ResponseEntity<?> updateReceiptStatus(Long id, int status) {
+        Receipt detail = receiptRepository.findById(id)
+                .orElseThrow(()->new ResourceNotFoundException("receipt", "id", id.toString()));
         detail.setStatus(status);
-        receiptDetailRepository.save(detail);
+        receiptRepository.save(detail);
         return ResponseEntity.ok(detail);
     }
 
@@ -138,7 +141,8 @@ public class ReceiptService {
             receiptDTO.setDate(receipt.getDate());
             receiptDTO.setEmployee(receipt.getEmployee().getName());
             receiptDTO.setSupplier(receipt.getSupplier().getName());
-
+            receiptDTO.setStatus(receipt.getStatus());
+            receiptDTO.setTotalPrice(receipt.getTotalPrice());
             receiptDTOS.add(receiptDTO);
         }
         return ResponseEntity.ok(receiptDTOS);
@@ -155,6 +159,7 @@ public class ReceiptService {
             receiptDetailDTO.setMaterial(receiptDetail.getMaterial().getName());
             receiptDetailDTO.setQuantity(receiptDetail.getQuantity());
             receiptDetailDTO.setStatus(receiptDetail.getStatus());
+            receiptDetailDTO.setTotalPrice(receiptDetail.getTotalPrice());
             receiptDetailDTOS.add(receiptDetailDTO);
         }
         return ResponseEntity.ok(receiptDetailDTOS);

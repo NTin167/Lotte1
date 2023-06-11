@@ -7,8 +7,12 @@ import java.util.Date;
 public class ReceiptDTO {
     private Long id;
     private LocalDateTime date;
+
+    private Integer totalPrice;
     private String Employee;
     private String supplier;
+
+    private int status;
 
     public Long getId() {
         return id;
@@ -41,5 +45,21 @@ public class ReceiptDTO {
 
     public void setSupplier(String supplier) {
         this.supplier = supplier;
+    }
+
+    public Integer getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice(Integer totalPrice) {
+        this.totalPrice = totalPrice;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
     }
 }

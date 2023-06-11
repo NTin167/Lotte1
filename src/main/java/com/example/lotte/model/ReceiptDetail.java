@@ -16,6 +16,8 @@ public class ReceiptDetail {
     private int quantity;
 
     private int status;
+
+    private Integer totalPrice;
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "receiptId", nullable = false)
     @JsonIgnore
@@ -64,5 +66,13 @@ public class ReceiptDetail {
 
     public void setQuantity(int quantity) {
         this.quantity = quantity;
+    }
+
+    public Integer getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice(Integer totalPrice) {
+        this.totalPrice = totalPrice;
     }
 }

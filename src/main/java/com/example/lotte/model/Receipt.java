@@ -19,6 +19,10 @@ public class Receipt {
     @Column(name = "date")
     private LocalDateTime date;
 
+    private Integer totalPrice;
+
+    private int status;
+
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "staffId", nullable = false)
@@ -74,4 +78,19 @@ public class Receipt {
         this.supplier = supplier;
     }
 
+    public Integer getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice(Integer totalPrice) {
+        this.totalPrice = totalPrice;
+    }
+
+    public int getStatus() {
+        return status;
+    }
+
+    public void setStatus(int status) {
+        this.status = status;
+    }
 }

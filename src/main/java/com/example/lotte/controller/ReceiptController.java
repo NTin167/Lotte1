@@ -29,9 +29,9 @@ public class ReceiptController {
         return receiptService.findAllRecipt();
     }
 
-    @PostMapping(value = "/updateReceiptStatus")
-    public ResponseEntity<?> updateStatus(@RequestParam Long id, @RequestParam int status) {
-        return receiptService.updateReceiptDetailStatus(id, status);
+    @PostMapping(value = "/updateReceiptStatus/{id}")
+    public ResponseEntity<?> updateStatus(@PathVariable(value = "id") Long id, @RequestParam int status) {
+        return receiptService.updateReceiptStatus(id, status);
     }
 
     @GetMapping(value = "/seeDetailReceipt")
