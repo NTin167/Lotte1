@@ -6,6 +6,7 @@ import lombok.Builder;
 
 import javax.persistence.*;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -27,15 +28,10 @@ public class Material {
     @JsonIgnore
     private Set<ReceiptDetail> receiptDetails = new HashSet<>();
 
-    public Material() {
-    }
 
-    public Material(Long id, String name, Integer price, String unit, Integer stock) {
-        this.id = id;
-        this.name = name;
-        this.price = price;
-        this.unit = unit;
-        this.stock = stock;
+    @ManyToMany(mappedBy = "materials")
+    private List<Food> foods;
+    public Material() {
     }
 
     public Long getId() {
@@ -76,6 +72,38 @@ public class Material {
 
     public void setStock(Integer stock) {
         this.stock = stock;
+    }
+
+    public Set<ReceiptDetail> getReceiptDetails() {
+        return receiptDetails;
+    }
+
+    public void setReceiptDetails(Set<ReceiptDetail> receiptDetails) {
+        this.receiptDetails = receiptDetails;
+    }
+
+    public List<Food> getFoods() {
+        return foods;
+    }
+
+    public void setFoods(List<Food> foods) {
+        this.foods = foods;
+    }
+    public Material(Long id, String name, Integer price, String unit, Integer stock) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+        this.unit = unit;
+        this.stock = stock;
+    }
+    public Material(Long id, String name, Integer price, String unit, Integer stock, Set<ReceiptDetail> receiptDetails, List<Food> foods) {
+        this.id = id;
+        this.name = name;
+        this.price = price;
+        this.unit = unit;
+        this.stock = stock;
+        this.receiptDetails = receiptDetails;
+        this.foods = foods;
     }
 
     public static class Builder {

@@ -4,6 +4,8 @@ import lombok.*;
 
 import javax.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class FoodDTO {
@@ -14,8 +16,18 @@ public class FoodDTO {
     private boolean status;
     private FoodCategoryDTO category;
 
+    private ArrayList<MaterialDTO> materialDTOS;
     // Các getter và setter
 
+
+    public FoodDTO(Long id, String name, String description, boolean status, FoodCategoryDTO category, ArrayList<MaterialDTO> materialDTOS) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.status = status;
+        this.category = category;
+        this.materialDTOS = materialDTOS;
+    }
 
     public Long getId() {
         return id;
@@ -55,5 +67,13 @@ public class FoodDTO {
 
     public void setStatus(boolean status) {
         this.status = status;
+    }
+
+    public ArrayList<MaterialDTO> getMaterialDTOS() {
+        return materialDTOS;
+    }
+
+    public void setMaterialDTOS(ArrayList<MaterialDTO> materialDTOS) {
+        this.materialDTOS = materialDTOS;
     }
 }

@@ -2,9 +2,11 @@ package com.example.lotte.service;
 
 import com.example.lotte.DTO.FoodCategoryDTO;
 import com.example.lotte.DTO.FoodDTO;
+import com.example.lotte.DTO.MaterialDTO;
 import com.example.lotte.exception.ResourceNotFoundException;
 import com.example.lotte.model.Food;
 import com.example.lotte.model.FoodCategory;
+import com.example.lotte.model.Material;
 import com.example.lotte.repository.FoodCategoryRepository;
 import com.example.lotte.repository.FoodRepository;
 import org.modelmapper.ModelMapper;
@@ -12,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -32,9 +35,21 @@ public class FoodService {
         Food newFood = new Food();
         newFood.setName(foodDTO.getName());
         newFood.setDescription(foodDTO.getDescription());
-        newFood.setStatus(foodDTO.getStatus());
+        newFood.setStatus(true);
         System.out.println(foodDTO.getId());
 
+        List<Material> materials = new ArrayList<>();
+        for(MaterialDTO materialDTO : foodDTO.getMaterialDTOS()) {
+            Material material = new Material();
+            material.setId(materialDTO.getId());
+            material.setPrice(materialDTO.getPrice());
+            material.setName(materialDTO.getName());
+            material.setUnit(materialDTO.getUnit());
+            material.setStock(materialDTO.getStock());
+            materials.add(material);
+        }
+
+        newFood.setMaterials(materials);
         FoodCategory foodCategory = foodCategoryRepository.findById(
                 foodDTO.getCategory().getId()).orElseThrow(() -> new ResourceNotFoundException("Không tìm ra Category với id", "ID CATEGORY"));
         newFood.setCategory(foodCategory);
@@ -53,6 +68,19 @@ public class FoodService {
         existingFood.setName(updatedFood.getName());
         existingFood.setDescription(updatedFood.getDescription());
         existingFood.setCategory(foodCategory);
+
+        List<Material> materials = new ArrayList<>();
+        for(MaterialDTO materialDTO : updatedFood.getMaterialDTOS()) {
+            Material material = new Material();
+            material.setId(materialDTO.getId());
+            material.setPrice(materialDTO.getPrice());
+            material.setName(materialDTO.getName());
+            material.setUnit(materialDTO.getUnit());
+            material.setStock(materialDTO.getStock());
+            materials.add(material);
+        }
+
+        existingFood.setMaterials(materials);
 
         return foodRepository.save(existingFood);
     }

@@ -5,6 +5,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import javax.persistence.*;
 import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @Table(name = "MonAn")
 @Entity
@@ -14,6 +17,8 @@ public class Food {
     private Long id;
 
     private String name;
+
+    private String image;
 
     private boolean status;
 
@@ -25,15 +30,25 @@ public class Food {
     @JoinColumn(name = "category_id")
     private FoodCategory category;
 
+    @ManyToMany
+    @JoinTable(
+            name = "food_material",
+            joinColumns = @JoinColumn(name = "food_id"),
+            inverseJoinColumns = @JoinColumn(name = "material_id")
+    )
+    private List<Material> materials;
+
     public Food() {
     }
 
-    public Food(Long id, String name, boolean status, String description, FoodCategory category) {
+    public Food(Long id, String name, String image, boolean status, String description, FoodCategory category, List<Material> materials) {
         this.id = id;
         this.name = name;
+        this.image = image;
         this.status = status;
         this.description = description;
         this.category = category;
+        this.materials = materials;
     }
 
     public Long getId() {
@@ -74,5 +89,21 @@ public class Food {
 
     public void setCategory(FoodCategory category) {
         this.category = category;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
+    }
+
+    public List<Material> getMaterials() {
+        return materials;
+    }
+
+    public void setMaterials(List<Material> materials) {
+        this.materials = materials;
     }
 }
