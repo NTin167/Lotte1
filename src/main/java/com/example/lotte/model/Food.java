@@ -19,7 +19,6 @@ public class Food {
 
     private String description;
 
-    private LocalDateTime dateUpdate;
 
     @JsonIgnore
     @ManyToOne(fetch = FetchType.LAZY)
@@ -27,6 +26,14 @@ public class Food {
     private FoodCategory category;
 
     public Food() {
+    }
+
+    public Food(Long id, String name, boolean status, String description, FoodCategory category) {
+        this.id = id;
+        this.name = name;
+        this.status = status;
+        this.description = description;
+        this.category = category;
     }
 
     public Long getId() {
@@ -61,28 +68,11 @@ public class Food {
         this.description = description;
     }
 
-    public LocalDateTime getDateUpdate() {
-        return dateUpdate;
-    }
-
-    public void setDateUpdate(LocalDateTime dateUpdate) {
-        this.dateUpdate = dateUpdate;
-    }
-
     public FoodCategory getCategory() {
         return category;
     }
 
     public void setCategory(FoodCategory category) {
-        this.category = category;
-    }
-
-    public Food(Long id, String name, boolean status, String description, LocalDateTime dateUpdate, FoodCategory category) {
-        this.id = id;
-        this.name = name;
-        this.status = status;
-        this.description = description;
-        this.dateUpdate = dateUpdate;
         this.category = category;
     }
 }

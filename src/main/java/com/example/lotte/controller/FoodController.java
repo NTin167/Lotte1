@@ -35,8 +35,14 @@ public class FoodController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Food> updateFood(@PathVariable Long id, @RequestBody Food updatedFood) {
+    public ResponseEntity<?> updateFood(@PathVariable Long id, @RequestBody FoodDTO updatedFood) {
         Food food = foodService.updateFood(id, updatedFood);
         return ResponseEntity.ok(updatedFood);
+    }
+
+    @PutMapping("/status/{id}")
+    public ResponseEntity<?> updateStatus(@PathVariable Long id, @RequestParam Boolean status) {
+        Food food = foodService.updateStatusFood(id, status);
+        return ResponseEntity.ok(food);
     }
 }

@@ -29,31 +29,29 @@ public class FoodService {
     }
 
     public Food createFood(FoodDTO foodDTO) {
-        Food food = new Food();
-        food.setName(foodDTO.getName());
-        food.setStatus(foodDTO.getStatus());
-        food.setDateUpdate(LocalDateTime.now());
-        food.setDescription(foodDTO.getDescription());
+        Food newFood = new Food();
+        newFood.setName(foodDTO.getName());
+        newFood.setDescription(foodDTO.getDescription());
+        newFood.setStatus(foodDTO.getStatus());
         System.out.println(foodDTO.getId());
+
         FoodCategory foodCategory = foodCategoryRepository.findById(
-                foodDTO.getId()).orElseThrow(() -> new ResourceNotFoundException("Không tìm ra Category với id", "ID CATEGORY"));
-        food.setCategory(foodCategory);
-        return foodRepository.save(food);
+                foodDTO.getCategory().getId()).orElseThrow(() -> new ResourceNotFoundException("Không tìm ra Category với id", "ID CATEGORY"));
+        newFood.setCategory(foodCategory);
+        return foodRepository.save(newFood);
     }
 
     public void deleteFood(Long id) {
         foodRepository.deleteById(id);
     }
 
-    public Food updateFood(Long id, Food updatedFood) {
+    public Food updateFood(Long id, FoodDTO updatedFood) {
         Food existingFood = foodRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Food not found with id: " , id.toString()));
         FoodCategory foodCategory = foodCategoryRepository.findById(updatedFood.getCategory().getId())
                 .orElseThrow(() -> new ResourceNotFoundException("Food not found with id: " , id.toString()));
         existingFood.setName(updatedFood.getName());
-        existingFood.setStatus(updatedFood.getStatus());
         existingFood.setDescription(updatedFood.getDescription());
-        existingFood.setDateUpdate(LocalDateTime.now());
         existingFood.setCategory(foodCategory);
 
         return foodRepository.save(existingFood);
@@ -67,5 +65,12 @@ public class FoodService {
 
     private FoodCategoryDTO convertToDto(FoodCategory category) {
         return modelMapper.map(category, FoodCategoryDTO.class);
+    }
+
+    public Food updateStatusFood(Long id, Boolean updatedFood) {
+        Food existingFood = foodRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Food not found with id: " , id.toString()));
+        existingFood.setStatus(updatedFood);
+        return foodRepository.save(existingFood);
     }
 }

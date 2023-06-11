@@ -9,9 +9,9 @@ import java.time.LocalDateTime;
 public class FoodDTO {
     private Long id;
     private String name;
-    private boolean status;
     private String description;
-    private LocalDateTime dateUpdate;
+
+    private boolean status;
     private FoodCategoryDTO category;
 
     // Các getter và setter
@@ -33,14 +33,6 @@ public class FoodDTO {
         this.name = name;
     }
 
-    public boolean getStatus() {
-        return status;
-    }
-
-    public void setStatus(boolean status) {
-        this.status = status;
-    }
-
     public String getDescription() {
         return description;
     }
@@ -49,19 +41,19 @@ public class FoodDTO {
         this.description = description;
     }
 
-    public LocalDateTime getDateUpdate() {
-        return dateUpdate;
-    }
-
-    public void setDateUpdate(LocalDateTime dateUpdate) {
-        this.dateUpdate = dateUpdate;
-    }
-
     public FoodCategoryDTO getCategory() {
         return category;
     }
 
     public void setCategory(FoodCategoryDTO category) {
         this.category = category;
+    }
+
+    public boolean getStatus() {
+        return status;
+    }
+
+    public void setStatus(boolean status) {
+        this.status = status;
     }
 }
