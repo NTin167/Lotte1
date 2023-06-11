@@ -6,9 +6,11 @@ import com.example.lotte.DTO.StockReceivingDTO;
 import com.example.lotte.builder.MaterialBuilder;
 import com.example.lotte.builder.MaterialConcreteBuilder;
 import com.example.lotte.model.Material;
+import com.example.lotte.model.Supplier;
 import com.example.lotte.response.ErrorResponse;
 import com.example.lotte.response.PaginationResponse;
 import com.example.lotte.service.MaterialService;
+import com.example.lotte.service.SupplierService;
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -30,6 +32,9 @@ public class MaterialController {
 
     @Autowired
     MaterialService materialService;
+
+    @Autowired
+    SupplierService supplierService;
 
     @GetMapping
     public List<Material> getAllMaterials() {
@@ -62,7 +67,10 @@ public class MaterialController {
         materialService.deleteMaterial(id);
     }
 
-
+    @GetMapping(value = "/getAllSuppliers")
+    public List<Supplier> getAllSuppliers() {
+        return supplierService.getAllSuppliers();
+    }
 
 }
 
