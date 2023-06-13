@@ -1,32 +1,19 @@
-package com.example.lotte.model;
+package com.example.lotte.DTO;
 
-import javax.persistence.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
 
-@Entity
-@Table(name = "KhachHang")
-public class Customer {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class CustomerDTO {
     private Long id;
-
     private String name;
-
     private String gender;
-
     private LocalDateTime dob;
-
     private String address;
-
     private String phoneNumber;
 
-    private int totalPoint;
-
-    @OneToOne
-    @JoinColumn(name = "account_id")
-    private User account;
+    // Getters and setters
 
     public Long getId() {
         return id;
@@ -66,22 +53,6 @@ public class Customer {
 
     public void setAddress(String address) {
         this.address = address;
-    }
-
-    public int getTotalPoint() {
-        return totalPoint;
-    }
-
-    public void setTotalPoint(int totalPoint) {
-        this.totalPoint = totalPoint;
-    }
-
-    public User getAccount() {
-        return account;
-    }
-
-    public void setAccount(User account) {
-        this.account = account;
     }
 
     public String getPhoneNumber() {
