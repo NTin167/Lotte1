@@ -8,7 +8,7 @@ import java.util.Date;
 public class CustomerDTO {
     private Long id;
     private String name;
-    private String gender;
+    private int gender;
     private LocalDateTime dob;
     private String address;
     private String phoneNumber;
@@ -31,11 +31,12 @@ public class CustomerDTO {
         this.name = name;
     }
 
-    public String getGender() {
+
+    public int getGender() {
         return gender;
     }
 
-    public void setGender(String gender) {
+    public void setGender(int gender) {
         this.gender = gender;
     }
 

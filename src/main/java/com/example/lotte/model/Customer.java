@@ -14,7 +14,7 @@ public class Customer {
 
     private String name;
 
-    private String gender;
+    private int gender;
 
     private LocalDateTime dob;
 
@@ -44,11 +44,11 @@ public class Customer {
         this.name = name;
     }
 
-    public String getGender() {
+    public int getGender() {
         return gender;
     }
 
-    public void setGender(String gender) {
+    public void setGender(int gender) {
         this.gender = gender;
     }
 

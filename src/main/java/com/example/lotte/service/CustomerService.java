@@ -7,7 +7,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class CustomerService {
@@ -67,5 +69,22 @@ public class CustomerService {
         } else {
             return ResponseEntity.notFound().build();
         }
+    }
+
+    public List<CustomerDTO> getAllCustomer() {
+        List<Customer> customers = customerRepository.findAll();
+        List<CustomerDTO> customerDTOs = customers.stream()
+                .map(customer -> {
+                    CustomerDTO dto = new CustomerDTO();
+                    dto.setId(customer.getId());
+                    dto.setName(customer.getName());
+                    dto.setGender(customer.getGender());
+                    dto.setDob(customer.getDob());
+                    dto.setAddress(customer.getAddress());
+                    dto.setPhoneNumber(customer.getPhoneNumber());
+                    return dto;
+                })
+                .collect(Collectors.toList());
+        return customerDTOs;
     }
 }
