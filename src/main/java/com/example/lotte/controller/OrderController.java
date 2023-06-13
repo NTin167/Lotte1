@@ -1,18 +1,32 @@
 package com.example.lotte.controller;
 
+import com.example.lotte.DTO.OrderDetailDTO;
 import com.example.lotte.DTO.OrderFoodDTO;
-import com.example.lotte.DTO.StockReceivingDTO;
+import com.example.lotte.model.OrderDetail;
 import com.example.lotte.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/order")
 public class OrderController {
     @Autowired
     private OrderService orderService;
+
+    @GetMapping(value = "/getAll")
+    public ResponseEntity<?> findAllOrder() {
+        return ResponseEntity.ok(orderService.getAllOrder());
+    }
+    @GetMapping("/{orderId}")
+    public List<OrderDetailDTO> getAllOrderDetailsByOrderId(@PathVariable Long orderId) {
+        return orderService.getAllOrderDetailsByOrderId(orderId);
+    }
+
+
     @PostMapping(value = "/create", consumes = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<?> importMaterials(@RequestBody OrderFoodDTO orderFoodDTO) {
         return orderService.orderFoods(orderFoodDTO);
@@ -32,4 +46,21 @@ public class OrderController {
     public ResponseEntity<?> updateOrder(@PathVariable(value = "id") Long id, @RequestBody OrderFoodDTO orderFoodDTO) {
         return orderService.updateOrder(id, orderFoodDTO);
     }
+
+    @PutMapping(value = "/{id}/updateDetail")
+    public ResponseEntity<?> updateOrderDetail(@PathVariable(value = "id") Long id, @RequestBody OrderDetail detail, @RequestParam Long idOrderDetail) {
+        return orderService.updateOrderDetailByOrderId(detail, idOrderDetail);
+    }
+
+    @PostMapping(value = "{id}/createOrderDetail")
+    public ResponseEntity<?> createOrderDetail(@PathVariable(value = "id") Long id, @RequestBody OrderDetail detail) {
+        return orderService.createOrderDetailByOrderId(id, detail);
+    }
+
+    @DeleteMapping(value = "{id}/deleteOrderDetail")
+    public  ResponseEntity<?> deleteOrderDetail(@RequestParam Long detailId) {
+        return orderService.deleteOrderDetailByOrderId(detailId);
+    }
+
+
 }

@@ -1,9 +1,6 @@
 package com.example.lotte.service;
 
-import com.example.lotte.DTO.FoodDTO;
-import com.example.lotte.DTO.ItemsDTO;
-import com.example.lotte.DTO.OrderFoodDTO;
-import com.example.lotte.DTO.ReceiptDTO;
+import com.example.lotte.DTO.*;
 import com.example.lotte.exception.ResourceNotFoundException;
 import com.example.lotte.model.*;
 import com.example.lotte.repository.*;
@@ -165,5 +162,99 @@ public class OrderService {
             }
         }
         return ResponseEntity.ok(orderFoodDTO);
+    }
+
+    public List<OrderDTO> getAllOrder() {
+        List<Order> orders = orderRepository.findAll();
+        List<OrderDTO> orderDTOs = new ArrayList<>();
+
+        for (Order order : orders) {
+            OrderDTO orderDTO = new OrderDTO();
+            orderDTO.setId(order.getId());
+            orderDTO.setStatus(order.getStatus());
+            orderDTO.setDateOrder(order.getDateOrder());
+            orderDTO.setEmployeeName(order.getEmployee().getName());
+            orderDTOs.add(orderDTO);
+        }
+
+        return orderDTOs;
+    }
+    public List<OrderDetailDTO> getAllOrderDetailsByOrderId(Long orderId) {
+        List<OrderDetail> orderDetails = orderDetailRepository.findAllByOrder_Id(orderId);
+        List<OrderDetailDTO> orderDetailDTOs = new ArrayList<>();
+
+        for (OrderDetail orderDetail : orderDetails) {
+            OrderDetailDTO orderDetailDTO = new OrderDetailDTO();
+            orderDetailDTO.setId(orderDetail.getId());
+            orderDetailDTO.setQuantity(orderDetail.getQuantity());
+            orderDetailDTO.setPrice(orderDetail.getPrice());
+            orderDetailDTO.setFoodName(orderDetail.getFood().getName());
+            orderDetailDTOs.add(orderDetailDTO);
+        }
+
+        return orderDetailDTOs;
+    }
+
+    public ResponseEntity<?> updateOrderDetailByOrderId(OrderDetail inputDetail, Long idOrderDetail){
+        Optional<OrderDetail> optionalOrderDetail = orderDetailRepository.findById(idOrderDetail);
+
+        if (optionalOrderDetail.isPresent()) {
+            OrderDetail detail = optionalOrderDetail.get();
+
+            // Kiểm tra nếu có yêu cầu sửa trường quantity
+            if (inputDetail.getQuantity() > 0) {
+                detail.setQuantity(inputDetail.getQuantity());
+            }
+
+            // Kiểm tra nếu có yêu cầu sửa trường foodId
+            if (inputDetail.getFood().getId() != null) {
+                Optional<Food> optionalFood = foodRepository.findById(inputDetail.getFood().getId());
+
+                if (optionalFood.isPresent()) {
+                    detail.setFood(optionalFood.get());
+                    detail.setPrice(optionalFood.get().getPrice());
+                } else {
+                    return ResponseEntity.badRequest().body("Food not found with id: " + inputDetail.getFood().getId());
+                }
+            }
+
+            orderDetailRepository.save(detail);
+            return ResponseEntity.ok(detail);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    public ResponseEntity<?> createOrderDetailByOrderId(Long orderId, OrderDetail detail) {
+        Optional<Order> optionalOrder = orderRepository.findById(orderId);
+        OrderDetail orderDetail;
+        if (optionalOrder.isPresent()) {
+            Optional<Food> optionalFood = foodRepository.findById(detail.getFood().getId());
+            if(optionalFood.isPresent()) {
+                orderDetail = new OrderDetail();
+                orderDetail.setOrder(optionalOrder.get());
+                orderDetail.setFood(optionalFood.get());
+                orderDetail.setPrice(optionalFood.get().getPrice());
+                orderDetail.setQuantity(detail.getQuantity());
+                orderDetailRepository.save(orderDetail);
+            }
+            else {
+                return ResponseEntity.badRequest().body("Food not found with id: " + detail.getFood().getId());
+            }
+        }
+        else {
+            return ResponseEntity.badRequest().body("Order not found with id: " + orderId);
+        }
+        return ResponseEntity.ok(orderDetail);
+    }
+
+    public ResponseEntity<?> deleteOrderDetailByOrderId(Long orderDetailId) {
+        Optional<OrderDetail> optionalOrderDetail = orderDetailRepository.findById(orderDetailId);
+        if(optionalOrderDetail.isPresent()) {
+            orderDetailRepository.deleteById(orderDetailId);
+            return ResponseEntity.ok("Delete succesfully");
+        }else {
+            return ResponseEntity.badRequest().body("Order detail not found with id: " + orderDetailId);
+        }
     }
 }
