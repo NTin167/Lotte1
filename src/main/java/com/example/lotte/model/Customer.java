@@ -1,5 +1,7 @@
 package com.example.lotte.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import javax.persistence.*;
 
 import java.time.LocalDateTime;
@@ -16,7 +18,8 @@ public class Customer {
 
     private int gender;
 
-    private LocalDateTime dob;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/YYYY")
+    private Date dob;
 
     private String address;
 
@@ -52,11 +55,11 @@ public class Customer {
         this.gender = gender;
     }
 
-    public LocalDateTime getDob() {
+    public Date getDob() {
         return dob;
     }
 
-    public void setDob(LocalDateTime dob) {
+    public void setDob(Date dob) {
         this.dob = dob;
     }
 

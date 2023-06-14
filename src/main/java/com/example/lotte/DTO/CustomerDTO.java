@@ -1,6 +1,8 @@
 package com.example.lotte.DTO;
 
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -9,7 +11,8 @@ public class CustomerDTO {
     private Long id;
     private String name;
     private int gender;
-    private LocalDateTime dob;
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/YYYY")
+    private Date dob;
     private String address;
     private String phoneNumber;
 
@@ -40,11 +43,11 @@ public class CustomerDTO {
         this.gender = gender;
     }
 
-    public LocalDateTime getDob() {
+    public Date getDob() {
         return dob;
     }
 
-    public void setDob(LocalDateTime dob) {
+    public void setDob(Date dob) {
         this.dob = dob;
     }
 
