@@ -28,6 +28,10 @@ public class Customer {
     private int totalPoint;
 
     @OneToOne
+    @JoinColumn(name = "rank_id")
+    private Rank rank;
+
+    @OneToOne
     @JoinColumn(name = "account_id")
     private User account;
 
@@ -93,5 +97,13 @@ public class Customer {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    public Rank getRank() {
+        return rank;
+    }
+
+    public void setRank(Rank rank) {
+        this.rank = rank;
     }
 }

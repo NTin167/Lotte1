@@ -17,6 +17,10 @@ public class Order {
 
     private LocalDateTime dateOrder;
 
+    private Integer totalPrice;
+    @OneToOne(mappedBy = "order")
+    private Bill bill;
+
     @ManyToOne
     @JoinColumn(name = "staff_id")
     private Employee employee;
@@ -51,5 +55,13 @@ public class Order {
 
     public void setEmployee(Employee employee) {
         this.employee = employee;
+    }
+
+    public Integer getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice(Integer totalPrice) {
+        this.totalPrice = totalPrice;
     }
 }

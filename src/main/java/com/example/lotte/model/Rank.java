@@ -3,8 +3,8 @@ package com.example.lotte.model;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "PTTT")
-public class PaymentMethod {
+@Table(name = "rank_member")
+public class Rank {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

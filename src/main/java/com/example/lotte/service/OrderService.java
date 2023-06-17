@@ -1,6 +1,7 @@
 package com.example.lotte.service;
 
 import com.example.lotte.DTO.*;
+import com.example.lotte.context.DiscountContext;
 import com.example.lotte.exception.ResourceNotFoundException;
 import com.example.lotte.model.*;
 import com.example.lotte.repository.*;
@@ -33,6 +34,15 @@ public class OrderService {
     @Autowired
     private OrderDetailRepository orderDetailRepository;
 
+    @Autowired
+    private BillRepository billRepository;
+
+    @Autowired
+    private DiscountContext discountContext;
+
+    @Autowired
+    private RankRepository rankRepository;
+
     @Transactional
     public ResponseEntity<?> orderFoods(OrderFoodDTO orderFoodDTO) {
         Employee employee = employeeRepository.findById(orderFoodDTO.getStaffId())
@@ -46,6 +56,7 @@ public class OrderService {
             order.setStatus(0);
             order.setEmployee(employee);
             order.setDateOrder(LocalDateTime.now());
+            order.setTotalPrice(0);
             orderRepository.save(order);
 
             for( ItemsDTO itemsDTO : orderFoodDTO.getFoodDTOS()) {
@@ -62,6 +73,10 @@ public class OrderService {
                     orderDetail.setFood(food);
                     orderDetail.setPrice(food.getPrice());
                     orderDetail.setQuantity(quantity);
+
+                    order.setTotalPrice(order.getTotalPrice() + (food.getPrice() * orderDetail.getQuantity()));
+                    orderRepository.save(order);
+
                     orderDetailRepository.save(orderDetail);
                 }
             }
@@ -188,7 +203,17 @@ public class OrderService {
             orderDetailDTO.setId(orderDetail.getId());
             orderDetailDTO.setQuantity(orderDetail.getQuantity());
             orderDetailDTO.setPrice(orderDetail.getPrice());
-            orderDetailDTO.setFoodName(orderDetail.getFood().getName());
+
+            Food food = foodRepository.findById(orderDetail.getFood().getId()).orElseThrow(()-> new ResourceNotFoundException("Food", "id"));
+            FoodDTO foodDTO = new FoodDTO();
+            foodDTO.setId(food.getId());
+            foodDTO.setName(food.getName());
+            foodDTO.setImage(food.getImage());
+            foodDTO.setDescription(food.getDescription());
+            foodDTO.setPrice(food.getPrice());
+            foodDTO.setStatus(food.getStatus());
+
+            orderDetailDTO.setFood(foodDTO);
             orderDetailDTOs.add(orderDetailDTO);
         }
 
@@ -207,16 +232,16 @@ public class OrderService {
             }
 
             // Kiểm tra nếu có yêu cầu sửa trường foodId
-            if (inputDetail.getFood().getId() != null) {
-                Optional<Food> optionalFood = foodRepository.findById(inputDetail.getFood().getId());
-
-                if (optionalFood.isPresent()) {
-                    detail.setFood(optionalFood.get());
-                    detail.setPrice(optionalFood.get().getPrice());
-                } else {
-                    return ResponseEntity.badRequest().body("Food not found with id: " + inputDetail.getFood().getId());
-                }
-            }
+//            if (inputDetail.getFood().getId() != null) {
+//                Optional<Food> optionalFood = foodRepository.findById(inputDetail.getFood().getId());
+//
+//                if (optionalFood.isPresent()) {
+//                    detail.setFood(optionalFood.get());
+//                    detail.setPrice(optionalFood.get().getPrice());
+//                } else {
+//                    return ResponseEntity.badRequest().body("Food not found with id: " + inputDetail.getFood().getId());
+//                }
+//            }
 
             orderDetailRepository.save(detail);
             return ResponseEntity.ok(detail);
@@ -256,5 +281,61 @@ public class OrderService {
         }else {
             return ResponseEntity.badRequest().body("Order detail not found with id: " + orderDetailId);
         }
+    }
+
+    public ResponseEntity<?> createBill(Long orderId, BillDTO billDTO) {
+        Optional<Order> order = orderRepository.findById(orderId);
+        Optional<Bill>  billInput = billRepository.findByOrderId(orderId);
+        Bill bill = new Bill();
+        if(order.isPresent() && !billInput.isPresent()) {
+            Optional<Customer> customer = customerRepository.findById(billDTO.getCustomer().getId());
+            Optional<PaymentMethod> paymentMethod = paymentMethodRepository.findById(billDTO.getPaymentMethod().getId());
+            if(customer.isPresent() && paymentMethod.isPresent()) {
+
+                DiscountStrategy discountStrategy;
+                // Dựa vào hạng thành viên để chọn Strategy phù hợp
+                if (customer.get().getRank().getName().equals("silver")) {
+                    discountStrategy = new SilverDiscountStrategy();
+                } else if (customer.get().getRank().getName().equals("gold")) {
+                    discountStrategy = new GoldDiscountStrategy();
+                } else if (customer.get().getRank().getName().equals("platinum")) {
+                    discountStrategy = new PlatinumDiscountStrategy();
+                } else {
+                    throw new IllegalArgumentException("Invalid membership");
+                }
+
+                // Đặt Strategy cho DiscountContext và tính toán số tiền giảm giá
+                discountContext.setDiscountStrategy(discountStrategy);
+                double totalDiscount;
+                totalDiscount =  discountContext.calculateDiscount(order.get().getTotalPrice());
+
+
+                bill.setDateCreate(LocalDateTime.now());
+                bill.setCustomerPayment(billDTO.getCustomerPayment());
+                bill.setPaymentMethod(paymentMethod.get());
+                bill.setCustomer(customer.get());
+                bill.setOrder(order.get());
+                bill.setDiscountPayment(totalDiscount);
+                billRepository.save(bill);
+
+                customer.get().setTotalPoint((int) (customer.get().getTotalPoint() + order.get().getTotalPrice() * 0.1));
+
+                if(customer.get().getTotalPoint() > 5000) {
+                    Rank rank = rankRepository.findById(Long.valueOf(3)).get();
+                    customer.get().setRank(rank);
+                } else if (customer.get().getTotalPoint() > 1000 && customer.get().getTotalPoint() < 5000) {
+                    Rank rank = rankRepository.findById(Long.valueOf(2)).get();
+                    customer.get().setRank(rank);
+                } else if (customer.get().getTotalPoint() > 500 && customer.get().getTotalPoint() < 1000) {
+                    Rank rank = rankRepository.findById(Long.valueOf(1)).get();
+                    customer.get().setRank(rank);
+                }
+                customerRepository.save(customer.get());
+            }
+        }
+        else {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok(bill);
     }
 }

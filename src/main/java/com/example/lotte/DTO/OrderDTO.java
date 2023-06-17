@@ -8,6 +8,8 @@ public class OrderDTO {
     private LocalDateTime dateOrder;
     private String employeeName;
 
+    private Integer totalPrice;
+
     // Constructors, getters, and setters
 
     public Long getId() {
@@ -40,5 +42,13 @@ public class OrderDTO {
 
     public void setEmployeeName(String employeeName) {
         this.employeeName = employeeName;
+    }
+
+    public Integer getTotalPrice() {
+        return totalPrice;
+    }
+
+    public void setTotalPrice(Integer totalPrice) {
+        this.totalPrice = totalPrice;
     }
 }

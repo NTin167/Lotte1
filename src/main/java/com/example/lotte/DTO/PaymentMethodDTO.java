@@ -1,15 +1,10 @@
-package com.example.lotte.model;
+package com.example.lotte.DTO;
 
-import javax.persistence.*;
-
-@Entity
-@Table(name = "PTTT")
-public class PaymentMethod {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class PaymentMethodDTO {
     private Long id;
-
     private String name;
+
+    // Constructors, getters, and setters
 
     public Long getId() {
         return id;

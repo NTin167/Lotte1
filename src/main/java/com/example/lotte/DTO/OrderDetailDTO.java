@@ -4,7 +4,7 @@ public class OrderDetailDTO {
     private Long id;
     private int quantity;
     private int price;
-    private String foodName;
+    private FoodDTO food;
 
     public Long getId() {
         return id;
@@ -30,21 +30,21 @@ public class OrderDetailDTO {
         this.price = price;
     }
 
-    public String getFoodName() {
-        return foodName;
+    public FoodDTO getFood() {
+        return food;
     }
 
-    public void setFoodName(String foodName) {
-        this.foodName = foodName;
+    public void setFood(FoodDTO food) {
+        this.food = food;
     }
 
     public OrderDetailDTO() {
     }
 
-    public OrderDetailDTO(Long id, int quantity, int price, String foodName) {
+    public OrderDetailDTO(Long id, int quantity, int price, FoodDTO food) {
         this.id = id;
         this.quantity = quantity;
         this.price = price;
-        this.foodName = foodName;
+        this.food = food;
     }
 }

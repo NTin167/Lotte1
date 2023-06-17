@@ -1,5 +1,6 @@
 package com.example.lotte.controller;
 
+import com.example.lotte.DTO.BillDTO;
 import com.example.lotte.DTO.OrderDetailDTO;
 import com.example.lotte.DTO.OrderFoodDTO;
 import com.example.lotte.model.OrderDetail;
@@ -62,5 +63,9 @@ public class OrderController {
         return orderService.deleteOrderDetailByOrderId(detailId);
     }
 
+    @PostMapping(value = "{id}/submitOrder")
+    public ResponseEntity<?> submitOrder(@PathVariable(value = "id") Long id, @RequestBody BillDTO billDTO) {
+        return orderService.createBill(id, billDTO);
+    }
 
 }
