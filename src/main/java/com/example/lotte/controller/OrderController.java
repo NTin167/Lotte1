@@ -68,4 +68,9 @@ public class OrderController {
         return orderService.createBill(id, billDTO);
     }
 
+    @GetMapping(value = "{id}/getDiscount")
+    public ResponseEntity<?> getDiscount(@PathVariable(value = "id") Long id, @RequestParam Long customerId) {
+        return orderService.getDiscount(id, customerId);
+    }
+
 }

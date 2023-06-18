@@ -355,4 +355,31 @@ public class OrderService {
         }
         return ResponseEntity.ok(bill);
     }
+
+    public ResponseEntity<?> getDiscount(Long orderId, Long customerId) {
+        Optional<Order> order = orderRepository.findById(orderId);
+        Optional<Customer> customer = customerRepository.findById(customerId);
+        double totalDiscount = 0;
+        if (customer.isPresent() && order.isPresent()) {
+            DiscountStrategy discountStrategy = null;
+            // Dựa vào hạng thành viên để chọn Strategy phù hợp
+            if (customer.get().getRank().getName().equals("none")) {
+                discountStrategy = new NoDiscountStrategy();
+            } else if (customer.get().getRank().getName().equals("silver")) {
+                discountStrategy = new SilverDiscountStrategy();
+            } else if (customer.get().getRank().getName().equals("gold")) {
+                discountStrategy = new GoldDiscountStrategy();
+            } else if (customer.get().getRank().getName().equals("platinum")) {
+                discountStrategy = new PlatinumDiscountStrategy();
+            }
+
+            // Đặt Strategy cho DiscountContext và tính toán số tiền giảm giá
+            discountContext.setDiscountStrategy(discountStrategy);
+            totalDiscount = discountContext.calculateDiscount(order.get().getTotalPrice());
+        }
+        else {
+            return ResponseEntity.ok("Customer or Order not found");
+        }
+        return ResponseEntity.ok(totalDiscount);
+    }
 }
