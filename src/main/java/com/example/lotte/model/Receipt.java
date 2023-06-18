@@ -3,9 +3,7 @@ package com.example.lotte.model;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import javax.persistence.*;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -27,7 +25,7 @@ public class Receipt {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "staffId", nullable = false)
     @JsonIgnore
-    private Employee employee;
+    private Staff staff;
 
     @OneToMany(mappedBy = "receipt", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonIgnore
@@ -54,12 +52,12 @@ public class Receipt {
         this.date = date;
     }
 
-    public Employee getEmployee() {
-        return employee;
+    public Staff getEmployee() {
+        return staff;
     }
 
-    public void setEmployee(Employee employee) {
-        this.employee = employee;
+    public void setEmployee(Staff staff) {
+        this.staff = staff;
     }
 
     public Set<ReceiptDetail> getReceiptDetails() {

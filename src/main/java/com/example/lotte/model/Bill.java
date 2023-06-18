@@ -25,17 +25,22 @@ public class Bill {
     @JoinColumn(name = "payment_method_id")
     private PaymentMethod paymentMethod;
 
+    @ManyToOne
+    @JoinColumn(name = "staff_id")
+    private Staff staff;
+
     @OneToOne
     @JoinColumn(name = "order_id")
     private Order order;
 
-    public Bill(Long id, LocalDateTime dateCreate, Integer customerPayment, Integer discountPayment, Customer customer, PaymentMethod paymentMethod, Order order) {
+    public Bill(Long id, LocalDateTime dateCreate, Integer customerPayment, double discountPayment, Customer customer, PaymentMethod paymentMethod, Staff staff, Order order) {
         this.id = id;
         this.dateCreate = dateCreate;
         this.customerPayment = customerPayment;
         this.discountPayment = discountPayment;
         this.customer = customer;
         this.paymentMethod = paymentMethod;
+        this.staff = staff;
         this.order = order;
     }
 
@@ -66,6 +71,13 @@ public class Bill {
         this.customerPayment = customerPayment;
     }
 
+    public double getDiscountPayment() {
+        return discountPayment;
+    }
+
+    public void setDiscountPayment(double discountPayment) {
+        this.discountPayment = discountPayment;
+    }
 
     public Customer getCustomer() {
         return customer;
@@ -83,19 +95,19 @@ public class Bill {
         this.paymentMethod = paymentMethod;
     }
 
+    public Staff getStaff() {
+        return staff;
+    }
+
+    public void setStaff(Staff staff) {
+        this.staff = staff;
+    }
+
     public Order getOrder() {
         return order;
     }
 
     public void setOrder(Order order) {
         this.order = order;
-    }
-
-    public double getDiscountPayment() {
-        return discountPayment;
-    }
-
-    public void setDiscountPayment(double discountPayment) {
-        this.discountPayment = discountPayment;
     }
 }

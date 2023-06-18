@@ -1,36 +1,32 @@
-package com.example.lotte.model;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
-
-import javax.persistence.*;
+package com.example.lotte.DTO;
 
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
-@Entity
-@Table(name = "employees")
-public class Employee {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class StaffDTO {
     private Long id;
-
     private String name;
-
     private String gender;
-
     private Date dob;
-
     private String address;
-
     private String phoneNumber;
-
-
     private Long account;
 
-    @OneToMany(mappedBy = "employee", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JsonIgnore
-    private Set<Receipt> receipts = new HashSet<>();
+    // Constructors
+
+    public StaffDTO() {
+    }
+
+    public StaffDTO(Long id, String name, String gender, Date dob, String address, String phoneNumber, Long account) {
+        this.id = id;
+        this.name = name;
+        this.gender = gender;
+        this.dob = dob;
+        this.address = address;
+        this.phoneNumber = phoneNumber;
+        this.account = account;
+    }
+
+    // Getters and Setters
 
     public Long getId() {
         return id;
@@ -86,13 +82,5 @@ public class Employee {
 
     public void setAccount(Long account) {
         this.account = account;
-    }
-
-    public Set<Receipt> getReceipts() {
-        return receipts;
-    }
-
-    public void setReceipts(Set<Receipt> receipts) {
-        this.receipts = receipts;
     }
 }

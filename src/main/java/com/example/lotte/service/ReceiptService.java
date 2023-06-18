@@ -21,7 +21,7 @@ import java.util.List;
 public class ReceiptService {
 
     @Autowired
-    private EmployeeRepository employeeRepository;
+    private StaffRepository staffRepository;
     @Autowired
     private ReceiptRepository receiptRepository;
     @Autowired
@@ -35,18 +35,18 @@ public class ReceiptService {
         System.out.println(stockReceivingDTO.getStaffId());
         System.out.println(stockReceivingDTO.getSupplierId());
 
-        Employee employee = employeeRepository.findById(
-                stockReceivingDTO.getStaffId()).orElseThrow(()->new ResourceNotFoundException("Employee", "id", stockReceivingDTO.getStaffId()));
+        Staff staff = staffRepository.findById(
+                stockReceivingDTO.getStaffId()).orElseThrow(()->new ResourceNotFoundException("Staff", "id", stockReceivingDTO.getStaffId()));
         Supplier supplier = supplierRepository.findById(stockReceivingDTO.getSupplierId()).get();
-        System.out.println(employee.getName());
+        System.out.println(staff.getName());
         System.out.println(supplier.getName());
         Receipt receipt = new Receipt();
-        if(employee == null || supplier == null) {
+        if(staff == null || supplier == null) {
             return ResponseEntity.ok("Không tìm thấy nhân viên hay nhà cung cấp với ID: " + stockReceivingDTO.getStaffId());
         }
         else {
             receipt.setDate(LocalDateTime.now());
-            receipt.setEmployee(employee);
+            receipt.setEmployee(staff);
             receipt.setSupplier(supplier);
             receipt.setStatus(0); // chưa hoàn thành
             receiptRepository.save(receipt);

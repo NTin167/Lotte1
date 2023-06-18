@@ -1,23 +1,14 @@
 package com.example.lotte.service;
 
-import com.example.lotte.DTO.ItemsDTO;
-import com.example.lotte.DTO.MaterialDTO;
-import com.example.lotte.DTO.StockReceivingDTO;
-import com.example.lotte.exception.ResourceNotFoundException;
 import com.example.lotte.model.*;
 import com.example.lotte.repository.*;
-import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class MaterialService {
@@ -25,7 +16,7 @@ public class MaterialService {
     private MaterialRepository materialRepository;
 
     @Autowired
-    private EmployeeRepository employeeRepository;
+    private StaffRepository staffRepository;
 
     @Autowired
     private SupplierRepository supplierRepository;

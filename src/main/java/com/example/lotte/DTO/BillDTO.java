@@ -11,6 +11,8 @@ public class BillDTO {
     private PaymentMethodDTO paymentMethod;
     private OrderDTO order;
 
+    private StaffDTO staff;
+
     // Constructors, getters, and setters
 
     public Long getId() {
@@ -67,5 +69,13 @@ public class BillDTO {
 
     public void setOrder(OrderDTO order) {
         this.order = order;
+    }
+
+    public StaffDTO getStaff() {
+        return staff;
+    }
+
+    public void setStaff(StaffDTO staff) {
+        this.staff = staff;
     }
 }

@@ -1,27 +1,16 @@
-package com.example.lotte.model;
-
-import javax.persistence.*;
+package com.example.lotte.DTO;
 
 import java.time.LocalDateTime;
 
-@Entity
-@Table(name = "order_food")
-public class Order {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class BillDetailDTO {
     private Long id;
-
     private int status;
-
     private LocalDateTime dateOrder;
+    private String employeeName;
 
     private Integer totalPrice;
-    @OneToOne(mappedBy = "order")
-    private Bill bill;
 
-    @ManyToOne
-    @JoinColumn(name = "staff_id")
-    private Staff staff;
+    // Constructors, getters, and setters
 
     public Long getId() {
         return id;
@@ -47,12 +36,12 @@ public class Order {
         this.dateOrder = dateOrder;
     }
 
-    public Staff getStaff() {
-        return staff;
+    public String getEmployeeName() {
+        return employeeName;
     }
 
-    public void setStaff(Staff staff) {
-        this.staff = staff;
+    public void setEmployeeName(String employeeName) {
+        this.employeeName = employeeName;
     }
 
     public Integer getTotalPrice() {

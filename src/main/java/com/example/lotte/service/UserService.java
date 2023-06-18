@@ -1,8 +1,7 @@
 package com.example.lotte.service;
 
-import com.example.lotte.model.Employee;
 import com.example.lotte.model.User;
-import com.example.lotte.repository.EmployeeRepository;
+import com.example.lotte.repository.StaffRepository;
 import com.example.lotte.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,7 +10,7 @@ import org.springframework.stereotype.Service;
 public class UserService {
     private final UserRepository userRepository;
     @Autowired
-    private EmployeeRepository emp;
+    private StaffRepository emp;
 
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;

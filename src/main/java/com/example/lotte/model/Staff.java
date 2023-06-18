@@ -1,26 +1,36 @@
-package com.example.lotte.DTO;
+package com.example.lotte.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import javax.persistence.*;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
-public class CustomerDTO {
+@Entity
+@Table(name = "staffs")
+public class Staff {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String name;
-    private int gender;
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/YYYY")
+
+    private String gender;
+
     private Date dob;
+
     private String address;
+
     private String phoneNumber;
 
-    private int totalPoint;
 
-    private RankDTO rank;
+    private Long account;
 
-    // Getters and setters
+    @OneToMany(mappedBy = "staff", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonIgnore
+    private Set<Receipt> receipts = new HashSet<>();
 
     public Long getId() {
         return id;
@@ -38,12 +48,11 @@ public class CustomerDTO {
         this.name = name;
     }
 
-
-    public int getGender() {
+    public String getGender() {
         return gender;
     }
 
-    public void setGender(int gender) {
+    public void setGender(String gender) {
         this.gender = gender;
     }
 
@@ -71,19 +80,19 @@ public class CustomerDTO {
         this.phoneNumber = phoneNumber;
     }
 
-    public int getTotalPoint() {
-        return totalPoint;
+    public Long getAccount() {
+        return account;
     }
 
-    public void setTotalPoint(int totalPoint) {
-        this.totalPoint = totalPoint;
+    public void setAccount(Long account) {
+        this.account = account;
     }
 
-    public RankDTO getRank() {
-        return rank;
+    public Set<Receipt> getReceipts() {
+        return receipts;
     }
 
-    public void setRank(RankDTO rank) {
-        this.rank = rank;
+    public void setReceipts(Set<Receipt> receipts) {
+        this.receipts = receipts;
     }
 }

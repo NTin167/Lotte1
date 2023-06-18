@@ -2,9 +2,9 @@ package com.example.lotte.controller;
 
 import com.example.lotte.DTO.UserDTO;
 import com.example.lotte.exception.ResourceNotFoundException;
-import com.example.lotte.model.Employee;
+import com.example.lotte.model.Staff;
 import com.example.lotte.model.User;
-import com.example.lotte.repository.EmployeeRepository;
+import com.example.lotte.repository.StaffRepository;
 import com.example.lotte.request.LoginRequest;
 import com.example.lotte.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,7 +22,7 @@ public class AuthController {
     private final UserService userService;
 
     @Autowired
-    private EmployeeRepository employeeRepository;
+    private StaffRepository staffRepository;
 
     public AuthController(UserService userService) {
         this.userService = userService;
@@ -33,15 +33,15 @@ public class AuthController {
         try {
             System.out.println(loginRequest.getUsername());
             User user = userService.login(loginRequest.getUsername(), loginRequest.getPassword());
-            Employee employee = employeeRepository.findByAccount(
-                    user.getId()).orElseThrow(()-> new ResourceNotFoundException("Employee", "id", user.getId()));
+            Staff staff = staffRepository.findByAccount(
+                    user.getId()).orElseThrow(()-> new ResourceNotFoundException("Staff", "id", user.getId()));
             UserDTO userDTO = new UserDTO();
             userDTO.setId(user.getId());
             userDTO.setPassword(user.getPassword());
             userDTO.setUsername(user.getUsername());
             userDTO.setRole(user.getRole());
             userDTO.setStatus(user.getStatus());
-            userDTO.setEmployeeId(employee.getId());
+            userDTO.setEmployeeId(staff.getId());
 
 
             return ResponseEntity.ok(userDTO);

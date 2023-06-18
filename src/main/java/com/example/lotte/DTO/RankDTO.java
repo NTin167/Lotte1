@@ -1,14 +1,7 @@
-package com.example.lotte.model;
+package com.example.lotte.DTO;
 
-import javax.persistence.*;
-
-@Entity
-@Table(name = "rank_member")
-public class Rank {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class RankDTO {
     private Long id;
-
     private String name;
 
     public Long getId() {
@@ -27,5 +20,11 @@ public class Rank {
         this.name = name;
     }
 
+    public RankDTO(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 
+    public RankDTO() {
+    }
 }

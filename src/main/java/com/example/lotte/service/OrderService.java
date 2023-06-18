@@ -22,7 +22,7 @@ public class OrderService {
     private OrderRepository orderRepository;
 
     @Autowired
-    private EmployeeRepository employeeRepository;
+    private StaffRepository staffRepository;
     @Autowired
     private CustomerRepository customerRepository;
     @Autowired
@@ -33,6 +33,8 @@ public class OrderService {
     private FoodRepository foodRepository;
     @Autowired
     private OrderDetailRepository orderDetailRepository;
+    @Autowired
+    private BilLDetailRepository bilLDetailRepository;
 
     @Autowired
     private BillRepository billRepository;
@@ -45,16 +47,16 @@ public class OrderService {
 
     @Transactional
     public ResponseEntity<?> orderFoods(OrderFoodDTO orderFoodDTO) {
-        Employee employee = employeeRepository.findById(orderFoodDTO.getStaffId())
-                .orElseThrow(()->new ResourceNotFoundException("Employee", "id", orderFoodDTO.getStaffId()));
+        Staff staff = staffRepository.findById(orderFoodDTO.getStaffId())
+                .orElseThrow(()->new ResourceNotFoundException("Staff", "id", orderFoodDTO.getStaffId()));
         Order order = new Order();
-        if(employee == null) {
+        if(staff == null) {
             return ResponseEntity.ok("Không tìm thấy nhân viên với id này");
         }
         else {
 
             order.setStatus(0);
-            order.setEmployee(employee);
+            order.setStaff(staff);
             order.setDateOrder(LocalDateTime.now());
             order.setTotalPrice(0);
             orderRepository.save(order);
@@ -147,14 +149,14 @@ public class OrderService {
         if(order == null) {
             return ResponseEntity.notFound().build();
         }
-        Employee employee = employeeRepository.findById(orderFoodDTO.getStaffId())
-                .orElseThrow(()->new ResourceNotFoundException("Employee", "id", orderFoodDTO.getStaffId()));
-        if(employee == null) {
+        Staff staff = staffRepository.findById(orderFoodDTO.getStaffId())
+                .orElseThrow(()->new ResourceNotFoundException("Staff", "id", orderFoodDTO.getStaffId()));
+        if(staff == null) {
             return ResponseEntity.ok("Không tìm thấy nhân viên với id này");
         }
         else {
 
-            order.setEmployee(employee);
+            order.setStaff(staff);
             order.setDateOrder(LocalDateTime.now());
             orderRepository.save(order);
 
@@ -188,7 +190,7 @@ public class OrderService {
             orderDTO.setId(order.getId());
             orderDTO.setStatus(order.getStatus());
             orderDTO.setDateOrder(order.getDateOrder());
-            orderDTO.setEmployeeName(order.getEmployee().getName());
+            orderDTO.setEmployeeName(order.getStaff().getName());
             orderDTOs.add(orderDTO);
         }
 
@@ -286,22 +288,23 @@ public class OrderService {
     public ResponseEntity<?> createBill(Long orderId, BillDTO billDTO) {
         Optional<Order> order = orderRepository.findById(orderId);
         Optional<Bill>  billInput = billRepository.findByOrderId(orderId);
+        Optional<Staff> staff = staffRepository.findById(billDTO.getStaff().getId());
         Bill bill = new Bill();
-        if(order.isPresent() && !billInput.isPresent()) {
+        if(order.isPresent() && !billInput.isPresent() && staff.isPresent()) {
             Optional<Customer> customer = customerRepository.findById(billDTO.getCustomer().getId());
             Optional<PaymentMethod> paymentMethod = paymentMethodRepository.findById(billDTO.getPaymentMethod().getId());
             if(customer.isPresent() && paymentMethod.isPresent()) {
 
-                DiscountStrategy discountStrategy;
+                DiscountStrategy discountStrategy = null;
                 // Dựa vào hạng thành viên để chọn Strategy phù hợp
-                if (customer.get().getRank().getName().equals("silver")) {
+                if(customer.get().getRank().getName().equals("none")) {
+                    discountStrategy = new NoDiscountStrategy();
+                } else if (customer.get().getRank().getName().equals("silver")) {
                     discountStrategy = new SilverDiscountStrategy();
                 } else if (customer.get().getRank().getName().equals("gold")) {
                     discountStrategy = new GoldDiscountStrategy();
                 } else if (customer.get().getRank().getName().equals("platinum")) {
                     discountStrategy = new PlatinumDiscountStrategy();
-                } else {
-                    throw new IllegalArgumentException("Invalid membership");
                 }
 
                 // Đặt Strategy cho DiscountContext và tính toán số tiền giảm giá
@@ -316,7 +319,21 @@ public class OrderService {
                 bill.setCustomer(customer.get());
                 bill.setOrder(order.get());
                 bill.setDiscountPayment(totalDiscount);
+                bill.setStaff(staff.get());
                 billRepository.save(bill);
+
+
+                List<OrderDetail> orderDetails = orderDetailRepository.findAllByOrder_Id(orderId);
+
+                for (OrderDetail orderDetail : orderDetails) {
+                    BillDetail billDetail = new BillDetail();
+                    billDetail.setQuantity(orderDetail.getQuantity());
+                    billDetail.setPrice(orderDetail.getPrice());
+                    billDetail.setFood(orderDetail.getFood());
+                    billDetail.setBill(bill);
+
+                    bilLDetailRepository.save(billDetail);
+                }
 
                 customer.get().setTotalPoint((int) (customer.get().getTotalPoint() + order.get().getTotalPrice() * 0.1));
 
@@ -334,7 +351,7 @@ public class OrderService {
             }
         }
         else {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity.ok(" Order not found or Bill already");
         }
         return ResponseEntity.ok(bill);
     }
