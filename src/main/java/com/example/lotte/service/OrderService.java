@@ -291,13 +291,20 @@ public class OrderService {
         Optional<Staff> staff = staffRepository.findById(billDTO.getStaff().getId());
         Bill bill = new Bill();
         if(order.isPresent() && !billInput.isPresent() && staff.isPresent()) {
-            Optional<Customer> customer = customerRepository.findById(billDTO.getCustomer().getId());
-            Optional<PaymentMethod> paymentMethod = paymentMethodRepository.findById(billDTO.getPaymentMethod().getId());
-            if(customer.isPresent() && paymentMethod.isPresent()) {
+            Optional<Customer> customer = null;
+            if (billDTO.getCustomer().getId() != null) {
+                customer = customerRepository.findById(billDTO.getCustomer().getId());
+            }
 
-                DiscountStrategy discountStrategy = null;
+            Optional<PaymentMethod> paymentMethod = paymentMethodRepository.findById(billDTO.getPaymentMethod().getId());
+            DiscountStrategy discountStrategy = null;
+            if( paymentMethod.isPresent() && customer != null) {
+
+
                 // Dựa vào hạng thành viên để chọn Strategy phù hợp
-                if(customer.get().getRank().getName().equals("none")) {
+                if (!customer.isPresent()) {
+                    discountStrategy = new NoDiscountStrategy();
+                } else if (customer.get().getRank().getName().equals("none")) {
                     discountStrategy = new NoDiscountStrategy();
                 } else if (customer.get().getRank().getName().equals("silver")) {
                     discountStrategy = new SilverDiscountStrategy();
@@ -309,32 +316,39 @@ public class OrderService {
 
                 // Đặt Strategy cho DiscountContext và tính toán số tiền giảm giá
                 discountContext.setDiscountStrategy(discountStrategy);
-                double totalDiscount;
-                totalDiscount =  discountContext.calculateDiscount(order.get().getTotalPrice());
+            }
+            else {
+                discountStrategy = new NoDiscountStrategy();
+                discountContext.setDiscountStrategy(discountStrategy);
+            }
+            double totalDiscount;
+            totalDiscount =  discountContext.calculateDiscount(order.get().getTotalPrice());
 
 
-                bill.setDateCreate(LocalDateTime.now());
-                bill.setCustomerPayment(billDTO.getCustomerPayment());
-                bill.setPaymentMethod(paymentMethod.get());
+            bill.setDateCreate(LocalDateTime.now());
+            bill.setCustomerPayment(billDTO.getCustomerPayment());
+            bill.setPaymentMethod(paymentMethod.get());
+            if(customer != null){
                 bill.setCustomer(customer.get());
-                bill.setOrder(order.get());
-                bill.setDiscountPayment(totalDiscount);
-                bill.setStaff(staff.get());
-                billRepository.save(bill);
+            }
+            bill.setOrder(order.get());
+            bill.setDiscountPayment(totalDiscount);
+            bill.setStaff(staff.get());
+            billRepository.save(bill);
 
 
-                List<OrderDetail> orderDetails = orderDetailRepository.findAllByOrder_Id(orderId);
+            List<OrderDetail> orderDetails = orderDetailRepository.findAllByOrder_Id(orderId);
 
-                for (OrderDetail orderDetail : orderDetails) {
-                    BillDetail billDetail = new BillDetail();
-                    billDetail.setQuantity(orderDetail.getQuantity());
-                    billDetail.setPrice(orderDetail.getPrice());
-                    billDetail.setFood(orderDetail.getFood());
-                    billDetail.setBill(bill);
+            for (OrderDetail orderDetail : orderDetails) {
+                BillDetail billDetail = new BillDetail();
+                billDetail.setQuantity(orderDetail.getQuantity());
+                billDetail.setPrice(orderDetail.getPrice());
+                billDetail.setFood(orderDetail.getFood());
+                billDetail.setBill(bill);
 
-                    bilLDetailRepository.save(billDetail);
-                }
-
+                bilLDetailRepository.save(billDetail);
+            }
+            if(customer != null ) {
                 customer.get().setTotalPoint((int) (customer.get().getTotalPoint() + order.get().getTotalPrice() * 0.1));
 
                 if(customer.get().getTotalPoint() > 5000) {
@@ -349,6 +363,7 @@ public class OrderService {
                 }
                 customerRepository.save(customer.get());
             }
+
         }
         else {
             return ResponseEntity.ok(" Order not found or Bill already");
