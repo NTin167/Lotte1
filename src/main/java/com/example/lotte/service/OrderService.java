@@ -336,7 +336,7 @@ public class OrderService {
             bill.setStaff(staff.get());
             billRepository.save(bill);
 
-            order.get().setStatus(2);
+            order.get().setStatus(1);
             orderRepository.save(order.get());
 
 
