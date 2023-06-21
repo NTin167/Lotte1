@@ -336,6 +336,9 @@ public class OrderService {
             bill.setStaff(staff.get());
             billRepository.save(bill);
 
+            order.get().setStatus(2);
+            orderRepository.save(order.get());
+
 
             List<OrderDetail> orderDetails = orderDetailRepository.findAllByOrder_Id(orderId);
 
@@ -396,5 +399,9 @@ public class OrderService {
             return ResponseEntity.ok("Customer or Order not found");
         }
         return ResponseEntity.ok(totalDiscount);
+    }
+
+    public List<PaymentMethod> getAllPaymentMethods() {
+        return paymentMethodRepository.findAll();
     }
 }

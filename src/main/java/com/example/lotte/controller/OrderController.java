@@ -4,6 +4,7 @@ import com.example.lotte.DTO.BillDTO;
 import com.example.lotte.DTO.OrderDetailDTO;
 import com.example.lotte.DTO.OrderFoodDTO;
 import com.example.lotte.model.OrderDetail;
+import com.example.lotte.model.PaymentMethod;
 import com.example.lotte.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -71,6 +72,11 @@ public class OrderController {
     @GetMapping(value = "{id}/getDiscount")
     public ResponseEntity<?> getDiscount(@PathVariable(value = "id") Long id, @RequestParam Long customerId) {
         return orderService.getDiscount(id, customerId);
+    }
+
+    @GetMapping(value = "/getPaymentMethod")
+    public List<PaymentMethod> getAllPaymentMethods() {
+        return orderService.getAllPaymentMethods();
     }
 
 }
